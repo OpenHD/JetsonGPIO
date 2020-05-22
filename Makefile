@@ -68,9 +68,8 @@ uninstall :
 	rm -rf $(PREFIX)/lib/$(LIB_FULL_NAME)
 	rm -rf $(PREFIX)/include/$(LIB_NAME).h
 
-#test : $(TEST_DIR)/$(TEST_SRC) 
-#	g++ -I$(PREFIX)/include/ -c -o $(BIN_DIR)/$@ $(TEST_DIR)/$(TEST_SRC) $(LIBS_FLAG)
-
+test : $(TEST_DIR)/$(TEST_SRC) 
+	g++ -o ./bin/test ./test/test.cpp -I./include/ -lJetsonGPIO
 clean :
 	rm -rf  $(BUILD_DIR)/*.o
 	rm -rf  $(TARGET_DIR)/*.a
