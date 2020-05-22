@@ -40,13 +40,12 @@ DEALINGS IN THE SOFTWARE.
 #include "PythonFunctions.h"
 
 using namespace GPIO;
-using namespace std;
 
 
 // ========================================= Begin of "gpio_pin_data.py" =========================================
 
-/* These vectors contain all the relevant GPIO data for each Jetson 
-   The values are use to generate dictionaries that map the corresponding pin
+/* These  std::vectors contain all the relevant GPIO data for each Jetson 
+   The values are use to generate dictionaries that  std::map the corresponding pin
    mode numbers to the Linux GPIO pin number and GPIO chip directory */
 bool ids_warned = false;
 
@@ -57,16 +56,16 @@ private:
     PIN_DATA();
 
 public:
-    const vector<_GPIO_PIN_DEF> JETSON_XAVIER_PIN_DEFS;
-    const vector<string> compats_xavier;
-    const vector<_GPIO_PIN_DEF> JETSON_TX2_PIN_DEFS;
-    const vector<string> compats_tx2;
-    const vector<_GPIO_PIN_DEF> JETSON_TX1_PIN_DEFS;
-    const vector<string> compats_tx1;
-    const vector<_GPIO_PIN_DEF> JETSON_NANO_PIN_DEFS;
-    const vector<string> compats_nano;
-    const map<Model, vector<_GPIO_PIN_DEF>> PIN_DEFS_MAP;
-    const map<Model, _GPIO_PIN_INFO> JETSON_INFO_MAP;
+    const  std::vector<_GPIO_PIN_DEF> JETSON_XAVIER_PIN_DEFS;
+    const  std::vector< std::string> compats_xavier;
+    const  std::vector<_GPIO_PIN_DEF> JETSON_TX2_PIN_DEFS;
+    const  std::vector< std::string> compats_tx2;
+    const  std::vector<_GPIO_PIN_DEF> JETSON_TX1_PIN_DEFS;
+    const  std::vector< std::string> compats_tx1;
+    const  std::vector<_GPIO_PIN_DEF> JETSON_NANO_PIN_DEFS;
+    const  std::vector< std::string> compats_nano;
+    const  std::map<Model,  std::vector<_GPIO_PIN_DEF>> PIN_DEFS_MAP;
+    const  std::map<Model, _GPIO_PIN_INFO> JETSON_INFO_MAP;
 
     PIN_DATA(const PIN_DATA&) = delete;
     PIN_DATA& operator=(const PIN_DATA&) = delete;
@@ -235,42 +234,42 @@ GPIO_data get_data(){
     try{
         PIN_DATA& _DATA = PIN_DATA::get_instance();
 
-        const string compatible_path = "/proc/device-tree/compatible";
-        const string ids_path = "/proc/device-tree/chosen/plugin-manager/ids";
+        const  std::string compatible_path = "/proc/device-tree/compatible";
+        const  std::string ids_path = "/proc/device-tree/chosen/plugin-manager/ids";
 
-        set<string> compatibles;
+        std::set< std::string> compatibles;
         
         { // scope for f:
-            ifstream f(compatible_path);
-            stringstream buffer;
+             std::ifstream f(compatible_path);
+             std::stringstream buffer;
             
             buffer << f.rdbuf();
-            string tmp_str = buffer.str();
-            vector<string> _vec_compatibles(split(tmp_str, '\x00'));
+             std::string tmp_str = buffer.str();
+             std::vector< std::string> _vec_compatibles(split(tmp_str, '\x00'));
             // convert to std::set
             copy(_vec_compatibles.begin(), _vec_compatibles.end(), inserter(compatibles, compatibles.end()));
         } // scope ends
 
-        auto matches = [&compatibles](const vector<string>& vals) {
+        auto matches = [&compatibles](const  std::vector< std::string>& vals) {
             for(const auto& v : vals){
                     if(compatibles.find(v) != compatibles.end()) return true;     
             }
         return false;
         };
 
-        auto find_pmgr_board = [&](const string& prefix){
+        auto find_pmgr_board = [&](const  std::string& prefix){
             if (!os_path_exists(ids_path)){ 
                     if (ids_warned == false){
                         ids_warned = true;
-                        string msg = "WARNING: Plugin manager information missing from device tree.\n"
+                         std::string msg = "WARNING: Plugin manager information missing from device tree.\n"
                                     "WARNING: Cannot determine whether the expected Jetson board is present." ;
-                        cerr << msg;
+                         std::cerr << msg;
                     }
                     return "None";
                 }
 
-                vector<string> files = os_listdir(ids_path);
-                for (const string& file : files){
+                 std::vector< std::string> files = os_listdir(ids_path);
+                for (const  std::string& file : files){
 
                     if (startswith(file, prefix))
                         return file.c_str();
@@ -279,14 +278,14 @@ GPIO_data get_data(){
             return "None";
             };
             
-            auto warn_if_not_carrier_board = [&](string carrier_board){
+            auto warn_if_not_carrier_board = [&]( std::string carrier_board){
 
-            string found = find_pmgr_board(carrier_board + "-");
+             std::string found = find_pmgr_board(carrier_board + "-");
                 if (found == "None"){
-                    string msg = "WARNING: Carrier board is not from a Jetson Developer Kit.\n"
+                     std::string msg = "WARNING: Carrier board is not from a Jetson Developer Kit.\n"
                                 "WARNNIG: Jetson.GPIO library has not been verified with this carrier board,\n"
                                 "WARNING: and in fact is unlikely to work correctly.";
-                    cerr << msg << endl;
+                     std::cerr << msg <<  std::endl;
                 }
         };
 
@@ -306,44 +305,44 @@ GPIO_data get_data(){
         }
         else if (matches(_DATA.compats_nano)){
             model = JETSON_NANO;
-            string module_id = find_pmgr_board("3448");
+             std::string module_id = find_pmgr_board("3448");
 
             if (module_id == "None")
-                throw runtime_error("Could not determine Jetson Nano module revision");
-            string revision = split(module_id, '-').back();
-            // Revision is an ordered string, not a decimal integer
+                throw  std::runtime_error("Could not determine Jetson Nano module revision");
+             std::string revision = split(module_id, '-').back();
+            // Revision is an ordered  std::string, not a decimal integer
             if (revision < "200")
-                throw runtime_error("Jetson Nano module revision must be A02 or later");
+                throw  std::runtime_error("Jetson Nano module revision must be A02 or later");
             
             warn_if_not_carrier_board("3449");
         }
         else{
-            throw runtime_error("Could not determine Jetson model");
+            throw  std::runtime_error("Could not determine Jetson model");
         }
 
-        vector<_GPIO_PIN_DEF> pin_defs = _DATA.PIN_DEFS_MAP.at(model);
+         std::vector<_GPIO_PIN_DEF> pin_defs = _DATA.PIN_DEFS_MAP.at(model);
         _GPIO_PIN_INFO jetson_info = _DATA.JETSON_INFO_MAP.at(model);
 
-        map<string, int> gpio_chip_base;
-        map<string, string> pwm_dirs;
+         std::map< std::string, int> gpio_chip_base;
+         std::map< std::string,  std::string> pwm_dirs;
 
         // Get the gpiochip offsets
-        set<string> gpio_chip_dirs;
+        std::set< std::string> gpio_chip_dirs;
         for (const auto& pin_def : pin_defs){
             if(pin_def.SysfsDir != "None")
                 gpio_chip_dirs.insert(pin_def.SysfsDir);
         }
         for (const auto& gpio_chip_dir : gpio_chip_dirs){
-            string gpio_chip_gpio_dir = gpio_chip_dir + "/gpio";
+             std::string gpio_chip_gpio_dir = gpio_chip_dir + "/gpio";
             auto files = os_listdir(gpio_chip_gpio_dir);
             for (const auto& fn : files){
                 if (!startswith(fn, "gpiochip"))
                     continue;
                 
-                string gpiochip_fn = gpio_chip_gpio_dir + "/" + fn + "/base";
+                 std::string gpiochip_fn = gpio_chip_gpio_dir + "/" + fn + "/base";
                 { // scope for f
-                    ifstream f(gpiochip_fn);
-                    stringstream buffer;
+                     std::ifstream f(gpiochip_fn);
+                     std::stringstream buffer;
                     buffer << f.rdbuf();
                     gpio_chip_base[gpio_chip_dir] = stoi(strip(buffer.str()));
                     break;
@@ -352,20 +351,20 @@ GPIO_data get_data(){
         }
 
 
-        auto global_gpio_id = [&gpio_chip_base](string gpio_chip_dir, int chip_relative_id){
+        auto global_gpio_id = [&gpio_chip_base]( std::string gpio_chip_dir, int chip_relative_id){
             if (gpio_chip_dir == "None" || chip_relative_id == -1)
                 return -1;
             return gpio_chip_base[gpio_chip_dir] + chip_relative_id;
         };
 
 
-        auto pwm_dir = [&pwm_dirs](string chip_dir){
+        auto pwm_dir = [&pwm_dirs]( std::string chip_dir){
             if (chip_dir == "None")
                 return "None";
             if (pwm_dirs.find(chip_dir) != pwm_dirs.end())
                 return pwm_dirs[chip_dir].c_str();
 
-            string chip_pwm_dir = chip_dir + "/pwm";
+             std::string chip_pwm_dir = chip_dir + "/pwm";
             /* Some PWM controllers aren't enabled in all versions of the DT. In
             this case, just hide the PWM function on this pin, but let all other
             aspects of the library continue to work. */
@@ -376,7 +375,7 @@ GPIO_data get_data(){
                 if (!startswith(fn, "pwmchip"))
                     continue;
                 
-                string chip_pwm_pwmchip_dir = chip_pwm_dir + "/" + fn;
+                 std::string chip_pwm_pwmchip_dir = chip_pwm_dir + "/" + fn;
                 pwm_dirs[chip_dir] = chip_pwm_pwmchip_dir;
                 return chip_pwm_pwmchip_dir.c_str();
             return "None";
@@ -384,11 +383,11 @@ GPIO_data get_data(){
         };
 
 
-        auto model_data = [&global_gpio_id, &pwm_dir](NumberingModes key, const vector<_GPIO_PIN_DEF>& pin_defs){
-            map<string, ChannelInfo> ret;
+        auto model_data = [&global_gpio_id, &pwm_dir](NumberingModes key, const  std::vector<_GPIO_PIN_DEF>& pin_defs){
+             std::map< std::string, ChannelInfo> ret;
             
             for (const auto& x : pin_defs){
-                string pinName;
+                 std::string pinName;
                 if(key == BOARD){
                     pinName = x.BoardPin;
                 }
@@ -415,7 +414,7 @@ GPIO_data get_data(){
             return ret;
         };
 
-        map<NumberingModes, map<string, ChannelInfo>> channel_data = 
+         std::map<NumberingModes,  std::map< std::string, ChannelInfo>> channel_data = 
         {
             { BOARD, model_data(BOARD, pin_defs) }, 
             { BCM, model_data(BCM, pin_defs) }, 
@@ -425,8 +424,8 @@ GPIO_data get_data(){
 
 	return {model, jetson_info, channel_data};
     }
-    catch(exception& e){
-        cerr << "[Exception] " << e.what() << " (catched from: get_data())" << endl;
+    catch(std::exception& e){
+         std::cerr << "[Exception] " << e.what() << " (catched from: get_data())" <<  std::endl;
       	throw false;	
     }
 }
