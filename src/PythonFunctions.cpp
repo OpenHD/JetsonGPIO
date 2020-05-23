@@ -27,22 +27,21 @@ DEALINGS IN THE SOFTWARE.
 #include <sstream>
 #include <cctype>
 
-#include "private/PythonFunctions.h"
+#include "PythonFunctions.h"
 
-using namespace std;
 
-bool startswith(const string& s, const string& prefix) {
+bool startswith(const  std::string& s, const  std::string& prefix) {
 	size_t pre_size = prefix.size();
 	if (s.size() < pre_size) return false;
 	
 	return prefix == s.substr(0, prefix.size());
 }
 
-vector<string> split(const string& s, const char d){
-    stringstream buffer(s);
+ std::vector< std::string> split(const  std::string& s, const char d){
+     std::stringstream buffer(s);
 
-    string tmp;
-    vector<string> outputVector;
+     std::string tmp;
+     std::vector< std::string> outputVector;
 
     while (getline(buffer, tmp, d))
         outputVector.push_back(tmp);
@@ -50,14 +49,14 @@ vector<string> split(const string& s, const char d){
     return outputVector;
 }
 
-bool os_access(const string& path, int mode){  // os.access
+bool os_access(const  std::string& path, int mode){  // os.access
     return access(path.c_str(), mode) == 0;
 }
 
-vector<string> os_listdir(const string& path){  // os.listdir
+ std::vector< std::string> os_listdir(const  std::string& path){  // os.listdir
     DIR *dir;
     struct dirent *ent;
-    vector<string> outputVector;
+     std::vector< std::string> outputVector;
 
     if ((dir = opendir (path.c_str())) != nullptr) {
         while ((ent = readdir (dir)) != nullptr) {
@@ -67,15 +66,15 @@ vector<string> os_listdir(const string& path){  // os.listdir
     return outputVector;
     } 
     else {
-        throw runtime_error("could not open directory: " + path);
+        throw  std::runtime_error("could not open directory: " + path);
     }
 }
 
-bool os_path_exists(const string& path){  // os.path.exists
+bool os_path_exists(const  std::string& path){  // os.path.exists
     return os_access(path, F_OK);
 }
 
-string strip(const string& s){
+ std::string strip(const  std::string& s){
     int start_idx = 0;
     int total = s.size();
     int end_idx = total - 1;
