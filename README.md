@@ -216,7 +216,7 @@ For Jetson Nano, the pinmux procedure is not necessary any longer.  Simply run
 sudo python /opt/nvidia/jetson-io/jetson-io.py and turn on the pwm ports.  
 
 Jetson Nano PWM directory is /sys/devices/7000a000.pwm/pwm/pwmchip0 -- 
-pin 30 is pwm0 and pin 33 is pwm2 under this directory.  
+pin 32 is pwm0 and pin 33 is pwm2 under this directory.  
 
 https://forums.developer.nvidia.com/t/nano-pwm-c/122492/13
 
