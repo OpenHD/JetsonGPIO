@@ -211,3 +211,18 @@ to the relevant pins. If the pinmux is not configured, PWM signals will not
 reach the pins! The JetsonGPIO library does not dynamically modify the pinmux
 configuration to achieve this. Read the L4T documentation for details on how to
 configure the pinmux.
+
+For Jetson Nano, the pinmux procedure is not necessary any longer.  Simply run 
+sudo python /opt/nvidia/jetson-io/jetson-io.py and turn on the pwm ports.  
+
+Jetson Nano PWM directory is /sys/devices/7000a000.pwm/pwm/pwmchip0 -- 
+pin 30 is pwm0 and pin 33 is pwm2 under this directory.  
+
+https://forums.developer.nvidia.com/t/nano-pwm-c/122492/13
+
+and 
+
+https://developer.ridgerun.com/wiki/index.php?title=JetsonTX2/Linux_PWM_Pulse_Width_Modulator#Control_PWM_through_sysfs
+
+are both relevant and provide amplifying information on how to manually test
+and use the Jetson Nano PWM pins.
