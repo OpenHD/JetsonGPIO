@@ -22,6 +22,10 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
+
+
+
+
 #include <iostream>
 #include <string>
 #include <stdexcept>
@@ -44,8 +48,8 @@ using namespace GPIO;
 
 // ========================================= Begin of "gpio_pin_data.py" =========================================
 
-/* These  std::vectors contain all the relevant GPIO data for each Jetson 
-   The values are use to generate dictionaries that  std::map the corresponding pin
+/* These  vectors contain all the relevant GPIO data for each Jetson 
+   The values are use to generate dictionaries that map the corresponding pin
    mode numbers to the Linux GPIO pin number and GPIO chip directory */
 bool ids_warned = false;
 
@@ -199,7 +203,7 @@ PIN_DATA::PIN_DATA()
             // Older versions of L4T have a DT bug which instantiates a bogus device
             // which prevents this library from using this PWM channel.
             { 168, "/sys/devices/6000d000.gpio", "32", "12", "GPIO07", "LCD_BL_PW", "/sys/devices/7000a000.pwm", 0 },
-            { 38, "/sys/devices/6000d000.gpio", "33", "13", "GPIO13", "GPIO_PE6", "/sys/devices/7000a000.pwm", 2 },
+            { 38,  "/sys/devices/6000d000.gpio", "33", "13", "GPIO13", "GPIO_PE6",  "/sys/devices/7000a000.pwm", 2 },
             { 76, "/sys/devices/6000d000.gpio", "35", "19", "I2S0_FS", "DAP4_FS", "None", -1 },
             { 51, "/sys/devices/6000d000.gpio", "36", "16", "UART1_CTS", "UART2_CTS", "None", -1 },
             { 12, "/sys/devices/6000d000.gpio", "37", "26", "SPI1_MOSI", "SPI2_MOSI", "None", -1 },
@@ -359,23 +363,26 @@ GPIO_data get_data(){
 
 
         auto pwm_dir = [&pwm_dirs]( std::string chip_dir){
-            if (chip_dir == "None")
+            if (chip_dir == "None"){
                 return "None";
-            if (pwm_dirs.find(chip_dir) != pwm_dirs.end())
+            }
+            if (pwm_dirs.find(chip_dir) != pwm_dirs.end()){
                 return pwm_dirs[chip_dir].c_str();
-
+            }
              std::string chip_pwm_dir = chip_dir + "/pwm";
             /* Some PWM controllers aren't enabled in all versions of the DT. In
             this case, just hide the PWM function on this pin, but let all other
             aspects of the library continue to work. */
-            if (!os_path_exists(chip_pwm_dir))
+            if (!os_path_exists(chip_pwm_dir)){
                 return "None";
+            }
             auto files = os_listdir(chip_pwm_dir);
             for (const auto& fn : files){
-                if (!startswith(fn, "pwmchip"))
+                if (!startswith(fn, "pwmchip")){
                     continue;
-                
+                }
                  std::string chip_pwm_pwmchip_dir = chip_pwm_dir + "/" + fn;
+
                 pwm_dirs[chip_dir] = chip_pwm_pwmchip_dir;
                 return chip_pwm_pwmchip_dir.c_str();
             return "None";
@@ -390,6 +397,10 @@ GPIO_data get_data(){
                  std::string pinName;
                 if(key == BOARD){
                     pinName = x.BoardPin;
+                    if (pinName == "32"){pwm_dir(x.PWMSysfsDir);}//NO IDEA WHY THIS WORKS or is required 
+                    //if the preceding call is not present, only one of the PWM GPIOs (pin 33 on the header) can be exported
+                    //and any attempt to do anything with pin 32 will crash the library. 
+                    //utterly ridiculous bug but I don't have the time to track it down.  
                 }
                 else if(key == BCM){
                     pinName = x.BCMPin;
@@ -400,7 +411,6 @@ GPIO_data get_data(){
                 else{ // TEGRA_SOC
                     pinName = x.TEGRAPin;
                 }
-                
                 ret.insert({ pinName, 
                             ChannelInfo{ pinName,
                                         x.SysfsDir,
@@ -408,8 +418,8 @@ GPIO_data get_data(){
                                         global_gpio_id(x.SysfsDir, x.LinuxPin),
                                         pwm_dir(x.PWMSysfsDir),
                                         x.PWMID }                                        
-                            }
-                        );
+                            });
+
             }
             return ret;
         };

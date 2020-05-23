@@ -644,7 +644,6 @@ GPIO::PWM::PWM(int channel, int frequency_hz)
             false, 0, 0, 0.0, 0}))  //temporary values
 {
     try{
-
         Directions app_cfg = _app_channel_configuration(pImpl->_ch_info);
         if(app_cfg == HARD_PWM)
             throw std::runtime_error("Can't create duplicate PWM objects");
@@ -653,7 +652,7 @@ GPIO::PWM::PWM(int channel, int frequency_hz)
         because RPi.GPIO does soft-PWM. We must undo the GPIO export to
         allow HW PWM to run on the pin.
         */
-        if(app_cfg == IN || app_cfg == OUT) cleanup(channel);
+        if(app_cfg == IN || app_cfg == OUT) {cleanup(channel);}
 
         if (GlobalVariables._gpio_warnings){
             auto sysfs_cfg = _sysfs_channel_configuration(pImpl->_ch_info);
@@ -665,7 +664,7 @@ GPIO::PWM::PWM(int channel, int frequency_hz)
                             "Use GPIO::setwarnings(false) to disable warnings" << std::endl;
             }
         }
-        
+
         _export_pwm(pImpl->_ch_info);
         pImpl->_reconfigure(frequency_hz, 50.0);
         GlobalVariables._channel_configuration[std::to_string(channel)] = HARD_PWM;
@@ -781,4 +780,3 @@ public:
 _cleaner& AutoCleaner = _cleaner::get_instance(); 
 
 //=========================================================================
-
