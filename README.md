@@ -7,8 +7,8 @@ It's an unofficial port of the NVIDIA's official Jetson GPIO Python library to C
   
 The library provides almost same APIs as the the NVIDIA's Jetson GPIO Python library.
   
-**But it DOESN'T support all functionalites of the NVIDIA's original one.**  
-(The gpio_event module hasn't implemented yet, for example.)
+**But it DOESN'T support all functionality of the NVIDIA's original one.**  
+(The gpio_event module isn't implemented yet, for example.)
   
     
 **(Tested on Jetson Nano and Jetson TX2)**
@@ -16,9 +16,9 @@ The library provides almost same APIs as the the NVIDIA's Jetson GPIO Python lib
 # Installation
 Clone this repository, build it, and install it.
 ```
-git clone https://github.com/pjueon/JetsonGPIO
-cd JetsonGPIO/build
-make all
+git clone https://github.com/JKI757/JetsonGPIO
+cd JetsonGPIO
+make 
 sudo make install
 ```
 
