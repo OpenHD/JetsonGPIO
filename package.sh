@@ -31,6 +31,7 @@ mkdir -p ${TMPDIR} || exit 1
 make clean || exit 1
 
 mkdir -p build
+mkdir -p lib
 
 make || exit 1
 
