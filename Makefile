@@ -46,6 +46,10 @@ ifeq ($(PREFIX),)
 	PREFIX := /usr/local
 endif
 
+ifdef $(DESTDIR)
+	$(DESTDIR) := $(DESTDIR)/
+endif
+
 all : $(LIB_OBJS)
 	$(AR) rcv $(TARGET_DIR)/$(LIB_FULL_NAME) $(BUILT_OBJS)
 	$(RANLIB) $(TARGET_DIR)/$(LIB_FULL_NAME)
@@ -61,12 +65,12 @@ gpio_pin_data.o : $(SRC_DIR)/gpio_pin_data.cpp $(LIB_HEADERS)
 	g++ $(INCLUDE_FLAG) -c -o $(BUILD_DIR)/$@ $(SRC_DIR)/gpio_pin_data.cpp
 
 install :
-	install -m 644 $(TARGET_DIR)/$(LIB_FULL_NAME) $(PREFIX)/lib/
-	install -m 644 $(INCLUDE_DIR)/$(LIB_NAME).h $(PREFIX)/include/
+	install -m 644 $(TARGET_DIR)/$(LIB_FULL_NAME) $(DESTDIR)$(PREFIX)/lib/
+	install -m 644 $(INCLUDE_DIR)/$(LIB_NAME).h $(DESTDIR)$(PREFIX)/include/
 
 uninstall : 
-	rm -rf $(PREFIX)/lib/$(LIB_FULL_NAME)
-	rm -rf $(PREFIX)/include/$(LIB_NAME).h
+	rm -rf $(DESTDIR)$(PREFIX)/lib/$(LIB_FULL_NAME)
+	rm -rf $(DESTDIR)$(PREFIX)/include/$(LIB_NAME).h
 
 test : $(TEST_DIR)/$(TEST_SRC) 
 	g++ -o ./bin/test ./test/test.cpp -I./include/ -lJetsonGPIO
