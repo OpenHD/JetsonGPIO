@@ -556,7 +556,7 @@ int GPIO::input(const std::string& channel){
 }
 
 int GPIO::input(int channel){
-    input(std::to_string(channel));
+    return input(std::to_string(channel));
 }
 
 
