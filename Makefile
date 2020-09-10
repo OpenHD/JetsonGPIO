@@ -65,6 +65,8 @@ gpio_pin_data.o : $(SRC_DIR)/gpio_pin_data.cpp $(LIB_HEADERS)
 	g++ $(INCLUDE_FLAG) -c -o $(BUILD_DIR)/$@ $(SRC_DIR)/gpio_pin_data.cpp
 
 install :
+	mkdir -p $(DESTDIR)$(PREFIX)/lib/
+	mkdir -p $(DESTDIR)$(PREFIX)/include/
 	install -m 644 $(TARGET_DIR)/$(LIB_FULL_NAME) $(DESTDIR)$(PREFIX)/lib/
 	install -m 644 $(INCLUDE_DIR)/$(LIB_NAME).h $(DESTDIR)$(PREFIX)/include/
 
