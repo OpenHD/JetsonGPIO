@@ -594,7 +594,7 @@ Directions GPIO::gpio_function(const std::string& channel){
 }
 
 Directions GPIO::gpio_function(int channel){
-    gpio_function(std::to_string(channel));
+    return gpio_function(std::to_string(channel));
 }
 
 
