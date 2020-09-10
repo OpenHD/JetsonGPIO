@@ -30,6 +30,8 @@ mkdir -p ${TMPDIR} || exit 1
 
 make clean || exit 1
 
+make || exit 1
+
 make install DESTDIR=${TMPDIR} || exit 1
 
 VERSION=$(git describe)
