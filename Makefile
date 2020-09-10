@@ -51,6 +51,7 @@ ifdef $(DESTDIR)
 endif
 
 all : $(LIB_OBJS)
+	mkdir -p $(BUILD_DIR)
 	$(AR) rcv $(TARGET_DIR)/$(LIB_FULL_NAME) $(BUILT_OBJS)
 	$(RANLIB) $(TARGET_DIR)/$(LIB_FULL_NAME)
 
